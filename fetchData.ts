@@ -1,8 +1,14 @@
 import axios from 'axios';
 
 async function fetchData() {
-  axios.get('/user/12345')
+  axios.get("https://www.google.com", {
+    signal: AbortSignal.timeout(1000),
+    timeout: 10,
+  }).then(function (response) {
+    console.log(response.status);
+  })
     .catch(function (error) {
+      console.log(error.code)
       if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx

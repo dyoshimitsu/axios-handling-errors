@@ -2,8 +2,8 @@ import * as https from 'http';
 import { IncomingMessage } from 'http';
 
 const options = {
-  // hostname: 'localhost',
-  hostname: '10.255.255.1',
+  hostname: 'localhost',
+  // hostname: '10.255.255.1',
   port: 3000,
   path: '/slow',
   method: 'GET',
@@ -37,11 +37,11 @@ req.on('socket', (socket) => {
   }, 500);
   socket.on('connect', () => {
     clearTimeout(connectionTimeout);
-    clearTimeout(dataReadTimeout);
   });
 });
 
 req.on('error', (e: Error) => {
+  clearTimeout(dataReadTimeout);
   console.error(`Got error: ${e.message}`);
   console.timeEnd();
 });

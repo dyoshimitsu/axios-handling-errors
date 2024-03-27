@@ -1,7 +1,17 @@
-import * as http from 'http';
+import * as https from 'http';
 import { IncomingMessage } from 'http';
 
-http.get('http://www.google.com', (res: IncomingMessage) => {
+const options = {
+  hostname: 'localhost',
+  // hostname: '10.255.255.1',
+  port: 3000,
+  path: '/slow',
+  method: 'GET',
+};
+
+console.time();
+
+const req = https.request(options, (res: IncomingMessage) => {
   let body: string = '';
 
   res.on('data', (chunk: Buffer) => {
@@ -10,8 +20,25 @@ http.get('http://www.google.com', (res: IncomingMessage) => {
 
   res.on('end', () => {
     console.log(body);
+    console.timeEnd();
   });
-
-}).on('error', (e: Error) => {
-  console.error(`Got error: ${e.message}`);
 });
+
+// let timeout: NodeJS.Timeout;
+
+req.on('socket', (socket) => {
+  const timeout = setTimeout(() => {
+    console.error('Socket connection could not be established within 500ms');
+    req.destroy();
+  }, 500);
+  socket.on('connect', () => {
+    clearTimeout(timeout);
+  });
+});
+
+req.on('error', (e: Error) => {
+  console.error(`Got error: ${e.message}`);
+  console.timeEnd();
+});
+
+req.end();

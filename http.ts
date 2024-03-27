@@ -19,12 +19,16 @@ const req = https.request(options, (res: IncomingMessage) => {
   });
 
   res.on('end', () => {
+    clearTimeout(timeout);
     console.log(body);
     console.timeEnd();
   });
 });
 
-// let timeout: NodeJS.Timeout;
+const timeout = setTimeout(() => {
+  console.error('Response did not end within 2 seconds');
+  req.destroy();
+}, 2000);
 
 req.on('socket', (socket) => {
   const timeout = setTimeout(() => {

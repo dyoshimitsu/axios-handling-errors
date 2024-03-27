@@ -2,8 +2,8 @@ import * as https from 'http';
 import { IncomingMessage } from 'http';
 
 const options = {
-  hostname: 'localhost',
-  // hostname: '10.255.255.1',
+  // hostname: 'localhost',
+  hostname: '10.255.255.1',
   port: 3000,
   path: '/slow',
   method: 'GET',
@@ -26,14 +26,16 @@ const req = https.request(options, (res: IncomingMessage) => {
 });
 
 const dataReadTimeout = setTimeout(() => {
-  console.error('Response did not end within 2 seconds');
-  req.destroy();
+  const error = new Error('Response did not end within 2 seconds');
+  error.name = 'DataReadTimeout';
+  req.destroy(error);
 }, 2000);
 
 req.on('socket', (socket) => {
   const connectionTimeout = setTimeout(() => {
-    console.error('Socket connection could not be established within 500ms');
-    req.destroy();
+    const error = new Error('Socket connection could not be established within 500ms');
+    error.name = 'ConnectionTimeout';
+    req.destroy(error);
   }, 500);
   socket.on('connect', () => {
     clearTimeout(connectionTimeout);
@@ -42,7 +44,7 @@ req.on('socket', (socket) => {
 
 req.on('error', (e: Error) => {
   clearTimeout(dataReadTimeout);
-  console.error(`Got error: ${e.message}`);
+  console.error(`Got error: ${e.name}`);
   console.timeEnd();
 });
 

@@ -1,21 +1,31 @@
-const timeout = 4000; // 1 second timeout
+const connectionTimeout = 50;
+const responseTimeout = 5000; // 4 seconds response timeout
 
-async function fetchDataWithTimeout() {
+async function fetchDataWithSeparateTimeouts() {
   const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
+  const connectionTimeoutId = setTimeout(() => controller.abort(), connectionTimeout);
 
-  const response = await Promise.race([
-    fetch("http://localhost:3000/slow", { signal: controller.signal }),
-    new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('timeout')), timeout)
-    )
-  ]);
+  try {
+    // const responsePromise = fetch("http://localhost:3000/slow", { signal: controller.signal });
+    const responsePromise = fetch("http://10.255.255.1", { signal: controller.signal });
+    clearTimeout(connectionTimeoutId);
 
-  clearTimeout(id);
+    const response = await Promise.race([
+      responsePromise,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Response timeout')), responseTimeout)
+      )
+    ]);
 
-  return response;
+    return response;
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      throw new Error('Connection timeout');
+    }
+    throw error;
+  }
 }
 
-fetchDataWithTimeout()
+fetchDataWithSeparateTimeouts()
   .then(response => console.log(response))
-  .catch(error => console.log(error));
+  .catch(error => console.log(error.message));

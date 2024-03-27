@@ -2,7 +2,8 @@
   "scripts": {
     "start": "ts-node axios.ts",
     "start:server": "ts-node express.ts",
-    "start:fetch": "ts-node fetch.ts"
+    "start:fetch": "ts-node fetch.ts",
+    "start:http": "ts-node http.ts"
   },
   "dependencies": {
     "@types/express": "^4.17.21",

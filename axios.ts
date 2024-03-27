@@ -39,4 +39,4 @@ async function fetchWithAxios() {
     });
 }
 
-axios();
+fetchWithAxios();

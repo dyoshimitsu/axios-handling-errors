@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-async function axios() {
+async function fetchWithAxios() {
   const connectController = new AbortController();
   // const connectionTimeout = setTimeout(() => connectController.abort(), 400);
   const connectionTimeout = setTimeout(() => {

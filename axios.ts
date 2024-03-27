@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-async function fetchData() {
+async function axios() {
   const connectController = new AbortController();
   // const connectionTimeout = setTimeout(() => connectController.abort(), 400);
   const connectionTimeout = setTimeout(() => {
@@ -39,4 +39,4 @@ async function fetchData() {
     });
 }
 
-fetchData();
+axios();

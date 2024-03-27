@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "ts-node fetchData.ts",
+    "start": "ts-node axios.ts",
     "start:server": "ts-node express.ts"
   },
   "dependencies": {
